@@ -41,13 +41,13 @@ body {font-family: Avenir;}
 .banner-large {
     font-size:28pt;
     font-weight:500;
+    color:black;
 }
 
 .banner-img {
     width:100%;
     height:100px;
     padding-top:5px;
-    background-image:url('https://petersherman123.github.io/stripes.png');
+    background-image:url('https://petersherman123.github.io/stripes2.png');
     background-size:cover;
-    opacity: 0.5;
 }

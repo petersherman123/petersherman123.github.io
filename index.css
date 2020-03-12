@@ -43,7 +43,8 @@ body {font-family: Avenir;}
     background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("_stripes_NORTH_AMERICA-USA-Massachusetts-1895-2018-NO.png");
   
     /* Set a specific height */
-    height: 50%;
+    height: 100%;
+    width: 100%;
   
     /* Position and center the image to scale nicely on all screens */
     background-position: center;

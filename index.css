@@ -55,12 +55,21 @@ body {font-family: Avenir;}
 
 .column {
     float: left;
+    padding: 30px;
+}
+.left {
     width: 50%;
-  }
-  
-  /* Clear floats after the columns */
-  .row:after {
+    text-align: justify;
+}
+
+.right {
+    width: 40%;
+    text-align: center;
+}
+
+/* Clear floats after the columns */
+.row:after {
     content: "";
     display: table;
     clear: both;
-  }
+}

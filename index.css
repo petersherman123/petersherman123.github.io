@@ -42,12 +42,13 @@ body {font-family: Avenir;}
     font-size:28pt;
     font-weight:500;
     color:black;
+    text-align: center;
 }
 
 .banner-img {
     width:100%;
     height:100px;
     padding-top:5px;
-    background-image:url('https://petersherman123.github.io/figures/stripes2.png');
+    background-image:url('/figures/stripes2.png');
     background-size:cover;
 }

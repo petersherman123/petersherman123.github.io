@@ -17,9 +17,9 @@ const App = () => (
   <BrowserRouter basename={PUBLIC_URL}>
     <Suspense fallback={<Main />}>
       <Switch>
-        <Route exact path="/" component={Index} />
-        <Route path="/resume" component={Resume} />
-        <Route path="/projects" component={Projects} />
+        <Route exact path="/gh-pages-url" component={Index} />
+        <Route path="/gh-pages-url/resume" component={Resume} />
+        <Route path="/gh-pages-url/projects" component={Projects} />
         <Route component={NotFound} status={404} />
       </Switch>
     </Suspense>

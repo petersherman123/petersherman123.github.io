@@ -18,8 +18,8 @@ const App = () => (
     <Suspense fallback={<Main />}>
       <Switch>
         <Route exact path="/" component={Index} />
-        <Route path="/resume" component={Resume} />
-        <Route path="/projects" component={Projects} />
+        <Route path="/Resume" component={Resume} />
+        <Route path="/Projects" component={Projects} />
         <Route component={NotFound} status={404} />
       </Switch>
     </Suspense>

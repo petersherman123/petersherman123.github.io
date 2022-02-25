@@ -6,11 +6,11 @@ const routes = [
   },
   {
     label: 'Projects',
-    path: '/projects',
+    path: '/Projects',
   },
   {
     label: 'Resume',
-    path: '/resume',
+    path: '/Resume',
   },
 ];
 

@@ -48,7 +48,7 @@ def header(library=False):
       {brand()}
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu <span aria-hidden="true">+</span></button>
       <nav id="site-nav" aria-label="Main navigation">
-        <a href="/#research">Research</a><a href="/publications/"{' aria-current="page"' if library else ''}>Publications</a><a href="/#experience">Experience</a><a href="/#contact">Contact</a>
+        <a href="/publications/"{' aria-current="page"' if library else ''}>Publications</a><a href="/#experience">Experience</a><a href="/#contact">Contact</a>
         <a class="nav-cv" href="/images/Peter_Sherman_CV.pdf" target="_blank" rel="noopener">CV {arrow()}</a>
       </nav>
     </div></header>'''
@@ -56,8 +56,7 @@ def header(library=False):
 
 def footer():
     return f'''<footer class="site-footer"><div class="container footer-inner">
-      {brand()}
-      <p class="stripe-credit">Global temperature, 1880–2025 · <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISTEMP</a><br>Stripes inspired by <a href="https://showyourstripes.info/" target="_blank" rel="noopener">Ed Hawkins</a> · <a href="/data/climate-stripes.json">Data &amp; scale</a></p>
+      <p class="stripe-credit">Climate stripes, 1880–2025 · <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISTEMP</a> · Inspired by <a href="https://showyourstripes.info/" target="_blank" rel="noopener">Ed Hawkins</a></p>
       <a href="#top" class="back-top">Back to top <span aria-hidden="true">↑</span></a>
     </div></footer>'''
 
@@ -89,10 +88,10 @@ def shell(title, description, body, library=False):
 '''
 
 
-def featured(paper, index):
+def featured(paper):
     return f'''<article class="featured-paper">
-      <div class="paper-index" aria-hidden="true">0{index}</div>
-      <div class="featured-copy"><p class="eyebrow">{e(paper['topic'])}<span class="eyebrow-divider">/</span>{paper['year']}</p>
+      <div class="paper-year">{paper['year']}</div>
+      <div class="featured-copy"><p class="eyebrow">{e(paper['topic'])}</p>
         <h3><a href="{e(paper['url'])}" target="_blank" rel="noopener noreferrer">{e(paper['title'])}{arrow()}</a></h3>
         <p class="paper-summary">{e(paper['summary'])}</p><p class="paper-venue">{e(paper['venue'])}<span> · {e(paper['type'])}</span></p>
       </div></article>'''
@@ -100,20 +99,20 @@ def featured(paper, index):
 
 def experience(item):
     description = f'<p class="experience-description">{e(item["description"])}</p>' if item.get("description") else ""
-    return f'''<article class="experience-row"><p class="experience-date">{e(item['dates'])}{'<span class="current-label">Current</span>' if item.get('current') else ''}</p>
+    return f'''<article class="experience-row"><p class="experience-date">{e(item['dates'])}</p>
       <div><h3>{e(item['organization'])}</h3><p class="experience-role">{e(item['role'])}</p>{description}</div></article>'''
 
 
 def home():
     selected_papers = sorted((p for p in papers if p.get("featured")), key=lambda p: p['id'] != 'mangroves-2025')
-    selected = "".join(featured(p, i + 1) for i, p in enumerate(selected_papers))
+    selected = "".join(featured(p) for p in selected_papers)
     recent = "".join(experience(x) for x in profile["experience"][:3])
     earlier = "".join(experience(x) for x in profile["experience"][3:])
     return f'''
     <section class="hero container" aria-labelledby="hero-title">
-      <div class="hero-copy"><p class="eyebrow hero-eyebrow">Machine learning · Climate science</p>
+      <div class="hero-copy">
         <h1 id="hero-title">Peter Sherman</h1>
-        <p class="hero-intro">My background is in climate science, statistical modeling, and applied machine learning. At Ode Partners, I worked on geospatial foundation models and AI research tools.</p>
+        <p class="hero-intro">My background is in climate science, statistical modeling, and applied machine learning.</p>
         <p class="hero-education">PhD, Earth and Planetary Sciences<br>Harvard University · 2022</p>
         <div class="hero-actions"><a class="button button-dark" href="/publications/">Publications {arrow('right')}</a><a class="text-link" href="/images/Peter_Sherman_CV.pdf" target="_blank" rel="noopener">CV {arrow()}</a>{external(profile['github'], 'GitHub')}</div>
       </div>
@@ -122,17 +121,7 @@ def home():
 
     <div class="container affiliations"><p><span>Orlando Magic</span>{e(profile['current_title'])}</p><p><span>Harvard University</span>Associate Researcher</p></div>
 
-    <section id="research" class="section container methods-section" aria-labelledby="methods-title">
-      <div class="section-heading"><h2 id="methods-title">Research &amp; engineering</h2></div>
-      <div class="method-grid">
-        <article><p class="eyebrow">01 / Geospatial ML</p><h3>Foundation-model embeddings</h3><p>Geospatial embeddings for annual global mangrove monitoring.</p>{external('https://ui.adsabs.harvard.edu/abs/2025AGUFMIN41C0375S/abstract', 'AGU 2025 · Conference abstract')}</article>
-        <article><p class="eyebrow">02 / AI tooling</p><h3>Retrieval &amp; research tools</h3><p>RAG pipelines and MCP servers for climate and environmental projects at Ode Partners.</p><a class="text-link" href="#experience">AI Research Engineer · 2024–2026 {arrow('right')}</a></article>
-        <article><p class="eyebrow">03 / Statistics</p><h3>Extreme-weather attribution</h3><p>Empirically fit extreme-value distributions, internal climate variability, and uncertainty in event attribution.</p>{external('https://doi.org/10.1175/JCLI-D-23-0542.1', 'Journal of Climate · 2025')}</article>
-      </div>
-      <div class="tools-line"><span>Tools</span><ul><li>Python</li><li>PyTorch</li><li>MLflow</li><li>Airflow</li><li>AWS</li><li>SQL</li><li>Google Earth Engine</li></ul></div>
-    </section>
-
-    <section id="publications" class="research-section section" aria-labelledby="research-title"><div class="container">
+    <section id="publications" class="research-section section" aria-labelledby="research-title"><span id="research" class="legacy-anchor" aria-hidden="true"></span><div class="container">
       <div class="section-heading research-heading"><h2 id="research-title">Selected publications</h2>{external(profile['scholar'], 'Google Scholar')}</div>
       <div class="featured-list">{selected}</div><div class="research-bottom"><a class="button button-outline" href="/publications/">All publications {arrow('right')}</a></div>
     </div></section>
@@ -186,7 +175,7 @@ def write(path, content):
 
 if __name__ == "__main__":
     stripe_assets()
-    write("index.html", shell("Peter Sherman", "Peter Sherman's publications and experience in climate science, geospatial machine learning, and AI research tools. PhD, Harvard University.", home()))
+    write("index.html", shell("Peter Sherman", "Peter Sherman's publications and experience in climate science, statistical modeling, and applied machine learning. PhD, Harvard University.", home()))
     write("publications/index.html", shell("Publications | Peter Sherman", "Research by Peter Sherman on climate dynamics, renewable energy, atmospheric science, geospatial machine learning, and marine microplastics.", library(), True))
     for legacy in ("projects",):
         write(f"{legacy}/index.html", redirect("/publications/", "Publications"))

@@ -1,0 +1,23 @@
+{
+  "name": "Peter Sherman",
+  "email": "petersherman@g.harvard.edu",
+  "current_title": "Lead Quantitative Researcher",
+  "current_organization": "Orlando Magic",
+  "scholar": "https://scholar.google.com/citations?user=GBFduP8AAAAJ&hl=en",
+  "linkedin": "https://www.linkedin.com/in/peter-j-sherman-ba924493/",
+  "github": "https://github.com/petersherman123",
+  "cv_date": "June 2026",
+  "scholar_snapshot": {"date": "October 10, 2026", "citations": 1555, "h_index": 13},
+  "experience": [
+    {"organization": "Orlando Magic", "role": "Lead Quantitative Researcher", "dates": "Nov 2025 — Present", "current": true, "description": ""},
+    {"organization": "Harvard University", "role": "Associate Researcher", "dates": "Nov 2022 — Present", "current": true, "description": "Research appointments with the Harvard China Project and the Department of Earth and Planetary Sciences."},
+    {"organization": "Ode Partners", "role": "AI Research Engineer", "dates": "Apr 2024 — Mar 2026", "description": "Applied AI for climate and environmental projects, including retrieval-augmented generation, MCP servers, and geospatial foundation models."},
+    {"organization": "Philadelphia 76ers", "role": "Data Scientist", "dates": "Oct 2024 — Nov 2025", "description": ""},
+    {"organization": "Los Angeles Dodgers", "role": "Consultant", "dates": "Feb 2023 — Mar 2026", "description": ""},
+    {"organization": "Climate Engine", "role": "Applied Climate Scientist", "dates": "Apr 2023 — Apr 2024", "description": "Climate metrics from observations and model projections to help organizations assess physical climate risk."},
+    {"organization": "KPMG", "role": "Senior Associate · Climate Risk Data & Analytics", "dates": "Nov 2022 — Apr 2023", "description": "Physical and transition risk analysis using CMIP climate projections and NGFS scenarios."},
+    {"organization": "Harvard University", "role": "Postdoctoral Research Fellow", "dates": "Feb 2022 — Nov 2022", "description": "Climate and energy research with Professor Michael McElroy and the Harvard China Project."},
+    {"organization": "Orlando Magic", "role": "Basketball Operations Analyst", "dates": "Sep 2021 — Nov 2022", "description": ""},
+    {"organization": "Minnesota Timberwolves", "role": "Remote Basketball Operations Analyst", "dates": "Sep 2019 — Sep 2021", "description": ""}
+  ]
+}

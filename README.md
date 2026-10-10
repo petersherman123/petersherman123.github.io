@@ -2,6 +2,8 @@
 
 Personal website at https://petersherman123.github.io/. A static site with no client-side framework, external fonts, analytics, or build dependencies. The HTML is committed so GitHub Pages can serve the repository root directly.
 
+The site uses a dark charcoal theme with muted blue links. The homepage lists roles, selected publications, experience, education, and contact information. The publications page includes search and topic/type filters. Keep headings factual and avoid taglines or descriptions of confidential work.
+
 ## Edit and preview
 
 - `data/profile.json`: public role titles, dates, contact links, and dated Scholar metrics.

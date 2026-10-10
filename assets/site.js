@@ -32,6 +32,35 @@ window.matchMedia('(min-width: 761px)').addEventListener('change', event => {
   if (event.matches) closeMenu();
 });
 
+const copyEmail = document.querySelector('#copy-email');
+if (copyEmail) {
+  const email = document.querySelector('#contact-email-text');
+  const copyStatus = document.querySelector('#copy-email-status');
+  let resetCopyLabel;
+  copyEmail.hidden = false;
+  copyEmail.addEventListener('click', async () => {
+    clearTimeout(resetCopyLabel);
+    copyEmail.disabled = true;
+    copyStatus.textContent = '';
+    try {
+      await navigator.clipboard.writeText(email.textContent.trim());
+      copyEmail.textContent = 'Copied';
+      copyStatus.textContent = 'Email address copied.';
+      resetCopyLabel = setTimeout(() => { copyEmail.textContent = 'Copy email'; }, 2500);
+    } catch {
+      copyEmail.textContent = 'Copy email';
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(email);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      copyStatus.textContent = 'Email selected. Use your keyboard or selection menu to copy it.';
+    } finally {
+      copyEmail.disabled = false;
+    }
+  });
+}
+
 const search = document.querySelector('#publication-search');
 if (search) {
   const controls = document.querySelector('.publication-controls');
@@ -44,11 +73,18 @@ if (search) {
   const normalize = text => text.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[’‘]/g, "'");
   function filterPublications() {
     const words = normalize(search.value.trim()).split(/\s+/).filter(Boolean);
+    const matchingRows = rows.filter(row => (!topic.value || row.dataset.topic === topic.value)
+      && words.every(word => normalize(row.dataset.search).includes(word)));
+    const matchingSet = new Set(matchingRows);
+    for (const button of filters) {
+      const total = matchingRows.filter(row => !button.dataset.filter || row.dataset.type === button.dataset.filter).length;
+      button.querySelector('[data-filter-count]').textContent = total;
+      button.setAttribute('aria-label', `${button.dataset.filterLabel}, ${total} ${total === 1 ? 'publication' : 'publications'}`);
+    }
     let count = 0;
     for (const row of rows) {
       const matches = (!selectedType || row.dataset.type === selectedType)
-        && (!topic.value || row.dataset.topic === topic.value)
-        && words.every(word => normalize(row.dataset.search).includes(word));
+        && matchingSet.has(row);
       row.hidden = !matches;
       if (matches) count += 1;
     }
@@ -56,6 +92,7 @@ if (search) {
     empty.hidden = count !== 0;
   }
   controls.hidden = false;
+  filterPublications();
   search.addEventListener('input', filterPublications);
   topic.addEventListener('change', filterPublications);
   filters.forEach(button => button.addEventListener('click', () => {

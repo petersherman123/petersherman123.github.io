@@ -51,9 +51,6 @@ a:hover { color: var(--accent); }
 .muted { color: var(--muted); }
 .site-header { position: sticky; top: 0; z-index: 20; background: rgba(16, 21, 27, .96); border-bottom: 1px solid var(--line); backdrop-filter: blur(16px); }
 .header-inner { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 25px; }
-.climate-brand { display: inline-flex; align-items: center; min-height: 44px; flex-shrink: 0; }
-.climate-brand img { width: 112px; height: 30px; border-radius: 2px; opacity: .92; transition: opacity .15s; }
-.climate-brand:hover img { opacity: 1; }
 #site-nav { display: flex; align-items: center; gap: 28px; }
 #site-nav > a { font-size: 12px; padding-block: 12px; color: var(--muted); }
 #site-nav > a:hover, #site-nav > a[aria-current] { color: var(--ink); }
@@ -112,8 +109,7 @@ a:hover { color: var(--accent); }
 .contact-links .text-link { font-size: 12px; font-weight: 400; }
 .contact-links .arrow { width: 14px; height: 14px; }
 .site-footer { padding-block: 28px; }
-.footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 25px; }
-.stripe-credit a { text-decoration: underline; text-underline-offset: 3px; }
+.footer-inner { display: flex; align-items: center; justify-content: flex-end; gap: 25px; }
 .site-footer p, .back-top { font-size: 11px; color: var(--muted); }
 .back-top span { margin-left: 12px; }
 .library-hero { padding-top: 36px; }
@@ -258,3 +254,13 @@ a:hover { color: var(--accent); }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+.home-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 12px; color: var(--muted); }
+.publication-authors strong { color: var(--ink); font-weight: 600; }
+.filter-count { margin-left: 7px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.type-filters button[aria-pressed=true] .filter-count { color: inherit; }
+.copy-email-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; margin-top: 12px; }
+.copy-email { background: transparent; border: 1px solid var(--line); border-radius: 4px; padding: 8px 12px; min-height: 40px; min-width: 96px; font-size: 12px; }
+.copy-email:hover { border-color: var(--accent); color: var(--accent); }
+.copy-email:disabled { cursor: wait; }
+#copy-email-status { font-size: 12px; color: var(--muted); }

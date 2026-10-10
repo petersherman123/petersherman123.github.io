@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Render the GitHub Pages site from small, editable JSON content files."""
 import json
+import re
 from html import escape
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 profile = json.loads((ROOT / "data/profile.json").read_text())
 papers = json.loads((ROOT / "data/publications.json").read_text())
-climate = json.loads((ROOT / "data/climate-stripes.json").read_text())
 
 
 def e(value):
@@ -23,29 +23,14 @@ def external(url, label, css="text-link"):
     return f'<a class="{css}" href="{e(url)}" target="_blank" rel="noopener noreferrer">{label}{arrow()}</a>'
 
 
-def stripe_assets():
-    """One stripe per completed year; fixed diverging scale around 1951–1980."""
-    palette = ['#193b73', '#2d5890', '#4775a8', '#7298bf', '#a1b9cf', '#cfdae2',
-               '#e6d8d1', '#dfb6a7', '#d58c79', '#be6056', '#a53d43', '#7e2638']
-    low, high = climate['color_range_c']
-    years = climate['years']
-    colors = [palette[min(len(palette) - 1, max(0, int((row['anomaly_c'] - low) / (high - low) * len(palette))))] for row in years]
-    bars = ''.join(f'<rect x="{i}" width="1" height="40" fill="{color}"/>' for i, color in enumerate(colors))
-    credit = f"Global annual temperature anomalies, {years[0]['year']}–{years[-1]['year']}. NASA GISTEMP v4; reference period {climate['reference_period']}. Color scale {low} to +{high} °C. Accessed {climate['accessed']}. Stripes concept: Ed Hawkins."
-    write('assets/climate-stripes.svg', f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {len(years)} 40" preserveAspectRatio="none"><title>Global warming stripes</title><desc>{e(credit)}</desc><g shape-rendering="crispEdges">{bars}</g></svg>\n')
-    # The favicon samples the same data in eight equal time intervals.
-    blocks = ''.join(f'<rect x="{i * 8}" width="8" height="64" fill="{colors[min(len(colors)-1, int((i+.5)*len(colors)/8))]}"/>' for i in range(8))
-    write('assets/favicon.svg', f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><title>Peter Sherman climate stripes</title><defs><clipPath id="round"><rect width="64" height="64" rx="10"/></clipPath></defs><g clip-path="url(#round)">{blocks}</g></svg>\n')
-
-
-def brand():
-    return '<a class="climate-brand" href="/" aria-label="Peter Sherman home" title="Peter Sherman · Global warming stripes, 1880–2025"><img src="/assets/climate-stripes.svg" width="146" height="40" alt="" aria-hidden="true"></a>'
+def author_list(authors):
+    return re.sub(r"\b(?:P\. Sherman|Peter Sherman)\b", r"<strong>\g<0></strong>", e(authors))
 
 
 def header(library=False):
     return f'''<a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header"><div class="header-inner">
-      {brand()}
+      <a class="home-link" href="/" aria-label="Peter Sherman home">Home</a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu <span aria-hidden="true">+</span></button>
       <nav id="site-nav" aria-label="Main navigation">
         <a href="/publications/"{' aria-current="page"' if library else ''}>Publications</a><a href="/#experience">Experience</a><a href="/#contact">Contact</a>
@@ -56,7 +41,7 @@ def header(library=False):
 
 def footer():
     return f'''<footer class="site-footer"><div class="container footer-inner">
-      <p class="stripe-credit">Climate stripes, 1880–2025 · <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISTEMP</a> · Inspired by <a href="https://showyourstripes.info/" target="_blank" rel="noopener">Ed Hawkins</a></p>
+
       <a href="#top" class="back-top">Back to top <span aria-hidden="true">↑</span></a>
     </div></footer>'''
 
@@ -135,7 +120,7 @@ def home():
 
     <section class="press-section"><div class="container press-inner"><h2>Press</h2><div>{external('https://chinaproject.harvard.edu/news/peter-sherman', 'Harvard China Project · Researcher profile')}{external('https://www.seas.harvard.edu/news/2020/11/indias-renewable-future', 'Harvard SEAS · India’s renewable future')}{external('https://www.seas.harvard.edu/news/2020/02/opportunity-blows-offshore-wind-china-0', 'Harvard SEAS · Offshore wind in China')}</div></div></section>
 
-    <section id="contact" class="contact-section" aria-labelledby="contact-title"><div class="container contact-inner"><h2 id="contact-title">Contact</h2><div class="contact-copy"><a class="contact-email" href="mailto:{e(profile['email'])}">{e(profile['email'])}{arrow()}</a><div class="contact-links">{external(profile['linkedin'], 'LinkedIn')}{external(profile['scholar'], 'Google Scholar')}{external(profile['github'], 'GitHub')}</div></div></div></section>
+    <section id="contact" class="contact-section" aria-labelledby="contact-title"><div class="container contact-inner"><h2 id="contact-title">Contact</h2><div class="contact-copy"><a class="contact-email" href="mailto:{e(profile['email'])}"><span id="contact-email-text">{e(profile['email'])}</span>{arrow()}</a><div class="copy-email-row"><button class="copy-email" id="copy-email" type="button" hidden>Copy email</button><span id="copy-email-status" role="status" aria-live="polite"></span></div><div class="contact-links">{external(profile['linkedin'], 'LinkedIn')}{external(profile['scholar'], 'Google Scholar')}{external(profile['github'], 'GitHub')}</div></div></div></section>
     '''
 
 
@@ -144,7 +129,7 @@ def publication_row(p):
     pdf = external(p["pdf"], "Open PDF", "publication-pdf") if p.get("pdf") else ""
     return f'''<article class="publication-row" data-search="{data}" data-type="{e(p['type'])}" data-topic="{e(p['topic'])}">
       <div class="publication-year">{p['year']}</div><div><p class="eyebrow publication-meta">{e(p['topic'])}<span class="type-tag">{e(p['type'])}</span></p>
-        <h2><a href="{e(p['url'])}" target="_blank" rel="noopener noreferrer">{e(p['title'])}{arrow()}</a></h2><p class="publication-authors">{e(p['authors'])}</p><p class="publication-venue">{e(p['venue'])}</p>{pdf}</div></article>'''
+        <h2><a href="{e(p['url'])}" target="_blank" rel="noopener noreferrer">{e(p['title'])}{arrow()}</a></h2><p class="publication-authors">{author_list(p['authors'])}</p><p class="publication-venue">{e(p['venue'])}</p>{pdf}</div></article>'''
 
 
 def library():
@@ -157,7 +142,7 @@ def library():
     <section class="container library-section" aria-label="Publication library"><div class="publication-controls" hidden>
       <div class="search-field"><label for="publication-search">Search publications</label><input id="publication-search" type="search" placeholder="Title, author, keyword, or year…" autocomplete="off"></div>
       <div class="topic-field"><label for="publication-topic">Research area</label><select id="publication-topic"><option value="">All areas</option>{topics}</select></div>
-      <div class="type-filters" role="group" aria-label="Publication type">{''.join(f'<button type="button" data-filter="{e(t)}" aria-pressed="{str(i==0).lower()}">{e(label)}</button>' for i,(t,label) in enumerate([('', 'All'),('Journal article','Journal articles'),('Conference abstract','Conference abstracts'),('Preprint','Preprints')]))}</div>
+      <div class="type-filters" role="group" aria-label="Publication type">{''.join(f'<button type="button" data-filter="{e(t)}" data-filter-label="{e(label)}" aria-pressed="{str(i==0).lower()}">{e(label)} <span class="filter-count" data-filter-count>{sum(not t or p["type"] == t for p in papers)}</span></button>' for i,(t,label) in enumerate([('', 'All'),('Journal article','Journal articles'),('Conference abstract','Conference abstracts'),('Preprint','Preprints')]))}</div>
     </div><p class="publication-count" role="status" aria-live="polite">{len(papers)} publications</p><div id="publication-list">{''.join(publication_row(p) for p in papers)}</div><div class="no-results" hidden><h2>No matching publications</h2><p>Try another keyword or research area.</p><button type="button" class="button button-outline" id="reset-filters">Clear filters {arrow('right')}</button></div>
     <p class="library-note">Includes journal articles, conference abstracts, and preprints. {external(profile['scholar'], 'Full Google Scholar profile')}</p></section>
     '''
@@ -174,7 +159,6 @@ def write(path, content):
 
 
 if __name__ == "__main__":
-    stripe_assets()
     write("index.html", shell("Peter Sherman", "Peter Sherman's publications and experience in climate science, statistical modeling, and applied machine learning. PhD, Harvard University.", home()))
     write("publications/index.html", shell("Publications | Peter Sherman", "Research by Peter Sherman on climate dynamics, renewable energy, atmospheric science, geospatial machine learning, and marine microplastics.", library(), True))
     for legacy in ("projects",):

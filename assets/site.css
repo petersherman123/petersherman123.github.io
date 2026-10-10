@@ -51,8 +51,9 @@ a:hover { color: var(--accent); }
 .muted { color: var(--muted); }
 .site-header { position: sticky; top: 0; z-index: 20; background: rgba(16, 21, 27, .96); border-bottom: 1px solid var(--line); backdrop-filter: blur(16px); }
 .header-inner { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 25px; }
-.wordmark { font-size: 18px; font-weight: 550; letter-spacing: -.035em; line-height: 1.2; white-space: nowrap; }
-.wordmark-dot { color: var(--accent); }
+.climate-brand { display: inline-flex; align-items: center; min-height: 44px; flex-shrink: 0; }
+.climate-brand img { width: 112px; height: 30px; border-radius: 2px; opacity: .92; transition: opacity .15s; }
+.climate-brand:hover img { opacity: 1; }
 #site-nav { display: flex; align-items: center; gap: 28px; }
 #site-nav > a { font-size: 12px; padding-block: 12px; color: var(--muted); }
 #site-nav > a:hover, #site-nav > a[aria-current] { color: var(--ink); }
@@ -61,12 +62,25 @@ a:hover { color: var(--accent); }
 .hero { display: grid; grid-template-columns: 1.6fr 1fr; gap: 90px; align-items: center; padding-block: 84px; }
 .hero-eyebrow { margin-bottom: 20px; }
 .hero h1 { font-size: clamp(46px, 5.4vw, 70px); letter-spacing: -.05em; }
-.hero-role { margin-top: 26px; font-size: 19px; line-height: 1.5; }
-.hero-role > span { color: var(--accent); }
-.hero-intro { font-size: 15px; line-height: 1.8; max-width: 460px; margin-top: 20px; color: var(--muted); }
+.hero-intro { font-size: 16px; line-height: 1.8; max-width: 480px; margin-top: 24px; color: var(--muted); }
+.hero-education { font-size: 12px; margin-top: 20px; line-height: 1.7; }
 .hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 28px; margin-top: 27px; }
 .portrait-frame { border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: var(--surface); }
 .portrait-frame img { width: 100%; height: 330px; object-fit: cover; object-position: 50% 35%; filter: saturate(.65); }
+.affiliations { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; border-block: 1px solid var(--line); padding-block: 22px; }
+.affiliations p { font-size: 12px; color: var(--muted); }
+.affiliations span { display: block; color: var(--ink); font-size: 14px; margin-bottom: 4px; }
+.methods-section { padding-block: 58px 66px; }
+.method-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 35px; }
+.method-grid article { border-top: 1px solid var(--line); padding-top: 20px; }
+.method-grid .eyebrow { font-size: 10px; }
+.method-grid h3 { font-size: 17px; line-height: 1.4; margin-top: 16px; }
+.method-grid article > p:not(.eyebrow) { font-size: 13px; color: var(--muted); margin-top: 12px; line-height: 1.8; }
+.method-grid .text-link { font-size: 11px; margin-top: 14px; gap: 8px; align-items: flex-start; }
+.method-grid .arrow { width: 14px; height: 14px; margin-top: 2px; }
+.tools-line { display: flex; gap: 28px; align-items: baseline; border-top: 1px solid var(--line); margin-top: 34px; padding-top: 22px; font-size: 11px; }
+.tools-line > span { color: var(--muted); }
+.tools-line ul { list-style: none; padding: 0; margin: 0; display: flex; gap: 10px 25px; flex-wrap: wrap; }
 .section-heading { margin-bottom: 35px; }
 .section-heading h2, .education-grid h2, .press-inner h2, .contact-inner h2 { font-size: 32px; }
 .research-section { background: var(--surface); border-block: 1px solid var(--line); }
@@ -113,7 +127,8 @@ a:hover { color: var(--accent); }
 .contact-links .arrow { width: 14px; height: 14px; }
 .site-footer { padding-block: 28px; }
 .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 25px; }
-.site-footer .wordmark { font-size: 16px; }
+.site-footer .climate-brand img { width: 80px; height: 22px; }
+.stripe-credit a { text-decoration: underline; text-underline-offset: 3px; }
 .site-footer p, .back-top { font-size: 11px; color: var(--muted); }
 .back-top span { margin-left: 12px; }
 .library-hero { padding-top: 36px; }
@@ -160,11 +175,11 @@ a:hover { color: var(--accent); }
   .hero { gap: 45px; padding-block: 65px; }
   .hero h1 { font-size: 55px; }
   .portrait-frame img { height: 310px; }
-  .hero-role { font-size: 17px; }
   .hero-intro { font-size: 14px; }
   .experience-layout, .press-inner, .contact-inner { gap: 35px; }
   .experience-row { grid-template-columns: 110px 1fr; gap: 20px; }
   .scholar-strip { gap: 25px; }
+  .method-grid { gap: 24px; }
 }
 @media (max-width: 760px) {
   .container, .header-inner { width: calc(100% - 40px); }
@@ -178,12 +193,21 @@ a:hover { color: var(--accent); }
   .hero { grid-template-columns: 1fr; gap: 32px; padding-block: 44px; }
   .hero h1 { font-size: clamp(43px, 9vw, 62px); }
   .hero-eyebrow { margin-bottom: 16px; }
-  .hero-role { margin-top: 22px; font-size: 18px; }
   .hero-intro { max-width: 490px; }
   .hero-actions { margin-top: 23px; }
   .hero-portrait { width: 100%; max-width: 370px; }
   .portrait-frame img { height: 290px; object-position: 50% 32%; }
   .section { padding-block: 48px; }
+  .affiliations { gap: 20px; }
+  .affiliations p { font-size: 11px; }
+  .affiliations span { font-size: 13px; }
+  .method-grid { grid-template-columns: 1fr; gap: 26px; }
+  .method-grid article { padding-top: 17px; }
+  .method-grid h3 { margin-top: 10px; }
+  .method-grid article > p:not(.eyebrow) { margin-top: 8px; }
+  .method-grid .text-link { margin-top: 9px; }
+  .tools-line { gap: 18px; margin-top: 26px; }
+  .tools-line ul { gap: 8px 18px; }
   .section-heading { margin-bottom: 25px; }
   .section-heading h2, .contact-inner h2 { font-size: 28px; }
   .research-heading { align-items: flex-start; flex-direction: column; gap: 8px; }

@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 profile = json.loads((ROOT / "data/profile.json").read_text())
 papers = json.loads((ROOT / "data/publications.json").read_text())
+climate = json.loads((ROOT / "data/climate-stripes.json").read_text())
 
 
 def e(value):
@@ -22,13 +23,32 @@ def external(url, label, css="text-link"):
     return f'<a class="{css}" href="{e(url)}" target="_blank" rel="noopener noreferrer">{label}{arrow()}</a>'
 
 
+def stripe_assets():
+    """One stripe per completed year; fixed diverging scale around 1951–1980."""
+    palette = ['#193b73', '#2d5890', '#4775a8', '#7298bf', '#a1b9cf', '#cfdae2',
+               '#e6d8d1', '#dfb6a7', '#d58c79', '#be6056', '#a53d43', '#7e2638']
+    low, high = climate['color_range_c']
+    years = climate['years']
+    colors = [palette[min(len(palette) - 1, max(0, int((row['anomaly_c'] - low) / (high - low) * len(palette))))] for row in years]
+    bars = ''.join(f'<rect x="{i}" width="1" height="40" fill="{color}"/>' for i, color in enumerate(colors))
+    credit = f"Global annual temperature anomalies, {years[0]['year']}–{years[-1]['year']}. NASA GISTEMP v4; reference period {climate['reference_period']}. Color scale {low} to +{high} °C. Accessed {climate['accessed']}. Stripes concept: Ed Hawkins."
+    write('assets/climate-stripes.svg', f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {len(years)} 40" preserveAspectRatio="none"><title>Global warming stripes</title><desc>{e(credit)}</desc><g shape-rendering="crispEdges">{bars}</g></svg>\n')
+    # The favicon samples the same data in eight equal time intervals.
+    blocks = ''.join(f'<rect x="{i * 8}" width="8" height="64" fill="{colors[min(len(colors)-1, int((i+.5)*len(colors)/8))]}"/>' for i in range(8))
+    write('assets/favicon.svg', f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><title>Peter Sherman climate stripes</title><defs><clipPath id="round"><rect width="64" height="64" rx="10"/></clipPath></defs><g clip-path="url(#round)">{blocks}</g></svg>\n')
+
+
+def brand():
+    return '<a class="climate-brand" href="/" aria-label="Peter Sherman home" title="Peter Sherman · Global warming stripes, 1880–2025"><img src="/assets/climate-stripes.svg" width="146" height="40" alt="" aria-hidden="true"></a>'
+
+
 def header(library=False):
     return f'''<a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header"><div class="header-inner">
-      <a class="wordmark" href="/" aria-label="Peter Sherman home">peter sherman<span class="wordmark-dot">.</span></a>
+      {brand()}
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu <span aria-hidden="true">+</span></button>
       <nav id="site-nav" aria-label="Main navigation">
-        <a href="/publications/"{' aria-current="page"' if library else ''}>Publications</a><a href="/#experience">Experience</a><a href="/#contact">Contact</a>
+        <a href="/#research">Research</a><a href="/publications/"{' aria-current="page"' if library else ''}>Publications</a><a href="/#experience">Experience</a><a href="/#contact">Contact</a>
         <a class="nav-cv" href="/images/Peter_Sherman_CV.pdf" target="_blank" rel="noopener">CV {arrow()}</a>
       </nav>
     </div></header>'''
@@ -36,8 +56,8 @@ def header(library=False):
 
 def footer():
     return f'''<footer class="site-footer"><div class="container footer-inner">
-      <a class="wordmark" href="/">peter sherman<span class="wordmark-dot">.</span></a>
-      <p>Peter Sherman · Data scientist</p>
+      {brand()}
+      <p class="stripe-credit">Global temperature, 1880–2025 · <a href="https://data.giss.nasa.gov/gistemp/" target="_blank" rel="noopener">NASA GISTEMP</a><br>Stripes inspired by <a href="https://showyourstripes.info/" target="_blank" rel="noopener">Ed Hawkins</a> · <a href="/data/climate-stripes.json">Data &amp; scale</a></p>
       <a href="#top" class="back-top">Back to top <span aria-hidden="true">↑</span></a>
     </div></footer>'''
 
@@ -85,21 +105,34 @@ def experience(item):
 
 
 def home():
-    selected = "".join(featured(p, i + 1) for i, p in enumerate(p for p in papers if p.get("featured")))
+    selected_papers = sorted((p for p in papers if p.get("featured")), key=lambda p: p['id'] != 'mangroves-2025')
+    selected = "".join(featured(p, i + 1) for i, p in enumerate(selected_papers))
     recent = "".join(experience(x) for x in profile["experience"][:3])
     earlier = "".join(experience(x) for x in profile["experience"][3:])
     return f'''
     <section class="hero container" aria-labelledby="hero-title">
-      <div class="hero-copy"><p class="eyebrow hero-eyebrow">Data scientist · PhD</p>
+      <div class="hero-copy"><p class="eyebrow hero-eyebrow">Machine learning · Climate science</p>
         <h1 id="hero-title">Peter Sherman</h1>
-        <p class="hero-role">{e(profile['current_title'])}<br><span>Orlando Magic</span></p>
-        <p class="hero-intro">Associate Researcher at Harvard University. PhD in Earth and Planetary Sciences, Harvard, 2022.</p>
-        <div class="hero-actions"><a class="button button-dark" href="/publications/">Publications {arrow('right')}</a><a class="text-link" href="/images/Peter_Sherman_CV.pdf" target="_blank" rel="noopener">CV {arrow()}</a></div>
+        <p class="hero-intro">My background is in climate science, statistical modeling, and applied machine learning. At Ode Partners, I worked on geospatial foundation models and AI research tools.</p>
+        <p class="hero-education">PhD, Earth and Planetary Sciences<br>Harvard University · 2022</p>
+        <div class="hero-actions"><a class="button button-dark" href="/publications/">Publications {arrow('right')}</a><a class="text-link" href="/images/Peter_Sherman_CV.pdf" target="_blank" rel="noopener">CV {arrow()}</a>{external(profile['github'], 'GitHub')}</div>
       </div>
       <figure class="hero-portrait"><div class="portrait-frame"><img src="/images/me.jpg" width="2247" height="2247" alt="Portrait of Peter Sherman" fetchpriority="high"></div></figure>
     </section>
 
-    <section id="research" class="research-section section" aria-labelledby="research-title"><div class="container">
+    <div class="container affiliations"><p><span>Orlando Magic</span>{e(profile['current_title'])}</p><p><span>Harvard University</span>Associate Researcher</p></div>
+
+    <section id="research" class="section container methods-section" aria-labelledby="methods-title">
+      <div class="section-heading"><h2 id="methods-title">Research &amp; engineering</h2></div>
+      <div class="method-grid">
+        <article><p class="eyebrow">01 / Geospatial ML</p><h3>Foundation-model embeddings</h3><p>Geospatial embeddings for annual global mangrove monitoring.</p>{external('https://ui.adsabs.harvard.edu/abs/2025AGUFMIN41C0375S/abstract', 'AGU 2025 · Conference abstract')}</article>
+        <article><p class="eyebrow">02 / AI tooling</p><h3>Retrieval &amp; research tools</h3><p>RAG pipelines and MCP servers for climate and environmental projects at Ode Partners.</p><a class="text-link" href="#experience">AI Research Engineer · 2024–2026 {arrow('right')}</a></article>
+        <article><p class="eyebrow">03 / Statistics</p><h3>Extreme-weather attribution</h3><p>Empirically fit extreme-value distributions, internal climate variability, and uncertainty in event attribution.</p>{external('https://doi.org/10.1175/JCLI-D-23-0542.1', 'Journal of Climate · 2025')}</article>
+      </div>
+      <div class="tools-line"><span>Tools</span><ul><li>Python</li><li>PyTorch</li><li>MLflow</li><li>Airflow</li><li>AWS</li><li>SQL</li><li>Google Earth Engine</li></ul></div>
+    </section>
+
+    <section id="publications" class="research-section section" aria-labelledby="research-title"><div class="container">
       <div class="section-heading research-heading"><h2 id="research-title">Selected publications</h2>{external(profile['scholar'], 'Google Scholar')}</div>
       <div class="featured-list">{selected}</div><div class="research-bottom"><a class="button button-outline" href="/publications/">All publications {arrow('right')}</a></div>
     </div></section>
@@ -152,7 +185,8 @@ def write(path, content):
 
 
 if __name__ == "__main__":
-    write("index.html", shell("Peter Sherman", f"Peter Sherman, {profile['current_title']} at {profile['current_organization']} and Associate Researcher at Harvard University.", home()))
+    stripe_assets()
+    write("index.html", shell("Peter Sherman", "Peter Sherman's publications and experience in climate science, geospatial machine learning, and AI research tools. PhD, Harvard University.", home()))
     write("publications/index.html", shell("Publications | Peter Sherman", "Research by Peter Sherman on climate dynamics, renewable energy, atmospheric science, geospatial machine learning, and marine microplastics.", library(), True))
     for legacy in ("projects",):
         write(f"{legacy}/index.html", redirect("/publications/", "Publications"))

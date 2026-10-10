@@ -38,9 +38,10 @@ class Page(HTMLParser):
 def main():
     outputs = [ROOT / "index.html", ROOT / "publications/index.html", ROOT / "404.html"]
     outputs.extend(ROOT / name / "index.html" for name in ("projects", "resume", "about"))
-    before = {p: p.read_bytes() for p in outputs}
+    assets = [ROOT / 'assets/climate-stripes.svg', ROOT / 'assets/favicon.svg']
+    before = {p: p.read_bytes() for p in [*outputs, *assets]}
     runpy.run_path(str(ROOT / "scripts/build.py"), run_name="__main__")
-    assert all(p.read_bytes() == old for p, old in before.items()), "Generated HTML was stale. Commit rebuilt files."
+    assert all(p.read_bytes() == old for p, old in before.items()), "Generated files were stale. Commit rebuilt files."
     pages = {p: Page(p) for p in outputs}
     references = 0
     for p, page in pages.items():
@@ -65,6 +66,10 @@ def main():
     assert [p["year"] for p in papers] == sorted((p["year"] for p in papers), reverse=True)
     assert all(p["url"].startswith("https://") for p in papers)
     assert all(p["type"] in {"Journal article", "Conference abstract", "Preprint"} for p in papers)
+    climate = json.loads((ROOT / 'data/climate-stripes.json').read_text())
+    years = [row['year'] for row in climate['years']]
+    assert years == list(range(years[0], years[-1] + 1)), 'Missing or duplicated stripe year.'
+    assert all(isinstance(row['anomaly_c'], (int, float)) for row in climate['years'])
     profile = json.loads((ROOT / "data/profile.json").read_text())
     sports = {"Orlando Magic", "Philadelphia 76ers", "Los Angeles Dodgers", "Minnesota Timberwolves"}
     assert all(not x.get("description") for x in profile["experience"] if x["organization"] in sports)

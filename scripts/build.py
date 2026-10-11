@@ -19,8 +19,8 @@ def arrow(direction="up"):
     return f'<svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="{path}"/></svg>'
 
 
-def external(url, label, css="text-link"):
-    return f'<a class="{css}" href="{e(url)}" target="_blank" rel="noopener noreferrer">{label}{arrow()}</a>'
+def external(url, label, css="text-link", icon=False):
+    return f'<a class="{css}" href="{e(url)}" target="_blank" rel="noopener noreferrer">{label}{arrow() if icon else ""}</a>'
 
 
 def author_list(authors):
@@ -41,7 +41,8 @@ def header(library=False):
 
 def footer():
     return f'''<footer class="site-footer"><div class="container footer-inner">
-
+      <p class="footer-name">{e(profile['name'])}</p>
+      <nav class="footer-links" aria-label="Elsewhere">{external(profile['scholar'], 'Google Scholar')}{external(profile['linkedin'], 'LinkedIn')}{external(profile['github'], 'GitHub')}</nav>
       <a href="#top" class="back-top">Back to top <span aria-hidden="true">↑</span></a>
     </div></footer>'''
 
@@ -82,6 +83,17 @@ def featured(paper):
       </div></article>'''
 
 
+PRESS = [
+    ("https://chinaproject.harvard.edu/news/peter-sherman", "Harvard China Project", "Researcher profile"),
+    ("https://www.seas.harvard.edu/news/2020/11/indias-renewable-future", "Harvard SEAS", "India’s renewable future"),
+    ("https://www.seas.harvard.edu/news/2020/02/opportunity-blows-offshore-wind-china-0", "Harvard SEAS", "Offshore wind in China"),
+]
+
+
+def press_card(url, outlet, title):
+    return f'<a class="press-card" href="{e(url)}" target="_blank" rel="noopener noreferrer"><span class="press-outlet">{e(outlet)}</span><span class="press-title">{e(title)}</span>{arrow()}</a>'
+
+
 def experience(item):
     description = f'<p class="experience-description">{e(item["description"])}</p>' if item.get("description") else ""
     return f'''<article class="experience-row"><p class="experience-date">{e(item['dates'])}</p>
@@ -97,14 +109,12 @@ def home():
     <section class="hero container" aria-labelledby="hero-title">
       <div class="hero-copy">
         <h1 id="hero-title">Peter Sherman</h1>
-        <p class="hero-intro">My background is in climate science, statistical modeling, and applied machine learning.</p>
-        <p class="hero-education">PhD, Earth and Planetary Sciences<br>Harvard University · 2022</p>
-        <div class="hero-actions"><a class="button button-dark" href="/publications/">Publications {arrow('right')}</a><a class="text-link" href="/images/Peter_Sherman_CV.pdf" target="_blank" rel="noopener">CV {arrow()}</a>{external(profile['github'], 'GitHub')}</div>
+        <p class="hero-intro">I’m a climate scientist and quantitative researcher. My work spans climate dynamics, renewable energy systems, and applied machine learning, from attributing extreme weather to monitoring ecosystems with geospatial foundation models.</p>
+        <dl class="hero-facts"><div><dt>Currently</dt><dd>{e(profile['current_title'])}, {e(profile['current_organization'])}<br>Associate Researcher, Harvard University</dd></div><div><dt>Education</dt><dd>PhD, Earth and Planetary Sciences<br>Harvard University · 2022</dd></div></dl>
+        <div class="hero-actions"><a class="button button-dark" href="/publications/">Publications {arrow('right')}</a><a class="text-link" href="/images/Peter_Sherman_CV.pdf" target="_blank" rel="noopener">CV</a>{external(profile['github'], 'GitHub')}</div>
       </div>
       <figure class="hero-portrait"><div class="portrait-frame"><img src="/images/me.jpg" width="2247" height="2247" alt="Portrait of Peter Sherman" fetchpriority="high"></div></figure>
     </section>
-
-    <div class="container affiliations"><p><span>Orlando Magic</span>{e(profile['current_title'])}</p><p><span>Harvard University</span>Associate Researcher</p></div>
 
     <section id="publications" class="research-section section" aria-labelledby="research-title"><span id="research" class="legacy-anchor" aria-hidden="true"></span><div class="container">
       <div class="section-heading research-heading"><h2 id="research-title">Selected publications</h2>{external(profile['scholar'], 'Google Scholar')}</div>
@@ -112,21 +122,21 @@ def home():
     </div></section>
 
     <section id="experience" class="section container" aria-labelledby="experience-title"><span id="work" class="legacy-anchor" aria-hidden="true"></span><div class="experience-layout">
-      <div class="section-heading experience-heading"><h2 id="experience-title">Experience</h2><a class="text-link" href="/images/Peter_Sherman_CV.pdf" target="_blank" rel="noopener">Download CV {arrow()}</a></div>
+      <div class="section-heading experience-heading"><h2 id="experience-title">Experience</h2><a class="text-link" href="/images/Peter_Sherman_CV.pdf" target="_blank" rel="noopener">Download CV</a></div>
       <div class="experience-list">{recent}<details class="earlier-experience"><summary>Previous &amp; additional roles <span aria-hidden="true">+</span></summary>{earlier}</details></div>
     </div>
     <div class="education-grid"><div><h2>Education</h2><h3>Harvard University</h3><p>PhD, Earth and Planetary Sciences · 2022</p><h3>Imperial College London</h3><p>Master’s degree in Physics · 2017</p></div><div><h2>Teaching</h2><p class="teaching-dates">Harvard University · 2018–2022</p><p>Climate change and Earth science courses; undergraduate and high-school research supervision.</p><p class="muted">Teaching recognized by the Derek Bok Center for Teaching and Learning.</p></div></div>
     </section>
 
-    <section class="press-section"><div class="container press-inner"><h2>Press</h2><div>{external('https://chinaproject.harvard.edu/news/peter-sherman', 'Harvard China Project · Researcher profile')}{external('https://www.seas.harvard.edu/news/2020/11/indias-renewable-future', 'Harvard SEAS · India’s renewable future')}{external('https://www.seas.harvard.edu/news/2020/02/opportunity-blows-offshore-wind-china-0', 'Harvard SEAS · Offshore wind in China')}</div></div></section>
+    <section class="press-section" aria-labelledby="press-title"><div class="container press-inner"><h2 id="press-title">Press</h2><div class="press-grid">{''.join(press_card(*item) for item in PRESS)}</div></div></section>
 
-    <section id="contact" class="contact-section" aria-labelledby="contact-title"><div class="container contact-inner"><h2 id="contact-title">Contact</h2><div class="contact-copy"><a class="contact-email" href="mailto:{e(profile['email'])}"><span id="contact-email-text">{e(profile['email'])}</span>{arrow()}</a><div class="copy-email-row"><button class="copy-email" id="copy-email" type="button" hidden>Copy email</button><span id="copy-email-status" role="status" aria-live="polite"></span></div><div class="contact-links">{external(profile['linkedin'], 'LinkedIn')}{external(profile['scholar'], 'Google Scholar')}{external(profile['github'], 'GitHub')}</div></div></div></section>
+    <section id="contact" class="contact-section" aria-labelledby="contact-title"><div class="container contact-inner"><h2 id="contact-title">Contact</h2><div class="contact-copy"><a class="contact-email" href="mailto:{e(profile['email'])}"><span id="contact-email-text">{e(profile['email'])}</span></a><div class="copy-email-row"><button class="copy-email" id="copy-email" type="button" hidden>Copy email</button><span id="copy-email-status" role="status" aria-live="polite"></span></div><div class="contact-links">{external(profile['linkedin'], 'LinkedIn')}{external(profile['scholar'], 'Google Scholar')}{external(profile['github'], 'GitHub')}</div></div></div></section>
     '''
 
 
 def publication_row(p):
     data = e(" ".join(str(p[k]) for k in ("title", "authors", "venue", "year", "topic", "type")).casefold())
-    pdf = external(p["pdf"], "Open PDF", "publication-pdf") if p.get("pdf") else ""
+    pdf = external(p["pdf"], "Open PDF", "publication-pdf", icon=True) if p.get("pdf") else ""
     return f'''<article class="publication-row" data-search="{data}" data-type="{e(p['type'])}" data-topic="{e(p['topic'])}">
       <div class="publication-year">{p['year']}</div><div><p class="eyebrow publication-meta">{e(p['topic'])}<span class="type-tag">{e(p['type'])}</span></p>
         <h2><a href="{e(p['url'])}" target="_blank" rel="noopener noreferrer">{e(p['title'])}{arrow()}</a></h2><p class="publication-authors">{author_list(p['authors'])}</p><p class="publication-venue">{e(p['venue'])}</p>{pdf}</div></article>'''

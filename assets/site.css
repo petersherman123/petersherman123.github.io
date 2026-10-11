@@ -246,8 +246,8 @@ a:hover { color: var(--accent); }
   .type-filters button { font-size: 13px; padding: 7px 10px; }
   .publication-row { grid-template-columns: 1fr; gap: 4px; padding-block: 25px; }
   .publication-year { font-size: 18px; }
-  .publication-meta { font-size: 11px; gap: 8px; }
-  .type-tag { font-size: 11px; }
+  .publication-meta { font-size: 12px; gap: 8px; }
+  .type-tag { font-size: 12px; }
   .publication-row h2 { font-size: 22px; margin-top: 11px; }
   .publication-authors, .publication-venue { font-size: 13px; }
   .library-note { font-size: 13px; }
@@ -283,3 +283,7 @@ a:hover { color: var(--accent); }
 .copy-email:hover { border-color: var(--accent); color: var(--accent); }
 .copy-email:disabled { cursor: wait; }
 #copy-email-status { font-size: 13px; color: var(--muted); }
+
+/* Comfortable tap targets for small links. */
+.publication-pdf, .back-top { min-height: 44px; display: inline-flex; align-items: center; }
+.publication-pdf { margin-top: 6px; }
